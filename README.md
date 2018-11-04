@@ -2,6 +2,7 @@
 
 Phase 1: 
 -> Preprocessing (Current)
+
 comment 1: 
 I have made a tidy version of the data, just need to transform it into sparse. 
 
