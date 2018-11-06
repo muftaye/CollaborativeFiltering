@@ -19,7 +19,7 @@ Clean up Github Repo.
 
 
 # Personalization Project - Part 1 HW2
-**Team:**  Muf Tayebaly (mt3195), James Xue (jx2181)
+**Team:**  Muf Tayebaly (mt3195), James Xue (jx2181)  
 **Data Set:**  Steam Video Game (Kaggle)
 
 ### Objective
