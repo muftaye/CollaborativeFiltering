@@ -103,14 +103,58 @@ class preprocessing:
         return one_hot_top
     
     def collapsed_random(self, processed_directory): 
-    
         """Collapsed One-Hot by User"""
+        one_hot_100games = pd.read_csv(processed_directory+"/one_hot_random.csv", ",")
         one_hot_collapsed = one_hot_100games.groupby(['user_id']).sum()
-        one_hot_collapsed.to_csv(processed_directory+"/one_hot_collapsed.csv")
-        one_hot_collapsed
-        
+        one_hot_collapsed = one_hot_collapsed.drop(['Unnamed: 0'], axis=1)
+        one_hot_collapsed.to_csv(processed_directory+"/one_hot_collapsed_random.csv")
+        return one_hot_collapsed
     
+    def collapsed_top(self, processed_directory): 
+        """Collapsed One-Hot by User"""
+        one_hot_100games = pd.read_csv(processed_directory+"/one_hot_top.csv", ",")
+        one_hot_collapsed = one_hot_100games.groupby(['user_id']).sum()
+        one_hot_collapsed = one_hot_collapsed.drop(['Unnamed: 0'], axis=1)
+        one_hot_collapsed.to_csv(processed_directory+"/one_hot_collapsed_top.csv")
+        return one_hot_collapsed
+    
+    def playtime_random(self, processed_directory): 
+        """Take the tidy data and enhance the one-hot data""" 
+        tidy = pd.read_csv(processed_directory+"/play_tidy_random.csv", ",")
+        tidy = tidy.drop(['Unnamed: 0'], axis=1)
+        onehot = pd.read_csv(processed_directory+"/one_hot_random.csv", ",").drop(['Unnamed: 0'], axis=1)
+        tidy_array = np.array(tidy)
         
-    #%%
+        for row in tidy_array: 
+            user = row[0]
+            game = row[1]
+            time = row[2]
+            onehot.loc[onehot.user_id == user, game] = time
+        
+        onehot.to_csv(processed_directory+"/one_hot_playtime_random.csv")
+        
+        return onehot
+    
+    def playtime_top(self, processed_directory): 
+        """Take the tidy data and enhance the one-hot data""" 
+        tidy = pd.read_csv(processed_directory+"/play_tidy_top.csv", ",")
+        tidy = tidy.drop(['Unnamed: 0'], axis=1)
+        onehot = pd.read_csv(processed_directory+"/one_hot_top.csv", ",").drop(['Unnamed: 0'], axis=1)
+        tidy_array = np.array(tidy)
+        
+        for row in tidy_array: 
+            user = row[0]
+            game = row[1]
+            time = row[2]
+            onehot.loc[onehot.user_id == user, game] = time
+        
+        onehot.to_csv(processed_directory+"/one_hot_playtime_top.csv")
+        
+        return onehot
+        
+#%%
 pre = preprocessing() 
-pre.one_hot_top(processed_directory)
+result = pre.playtime_top(processed_directory)
+result 
+#%%
+result.describe()
