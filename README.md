@@ -46,4 +46,4 @@ The sampling also maintains random seeds in case we need to replicate a run and 
 Using our sampled data of popular random games, customers who played more than 1 of the games sampled and the ratings list (customer-game hours played), we derived what our train and test data was by holding out data from the ratings (hours played) list.  For example, one run we held out 10% of data for test and the remaining was used for training.  We could then use the train data to create the sparse matrix and have the test data to measure accuracy.
 
 ### Matrix Factorization
-
+We used the Implicit package as recommended in the project instructions so we could get a feel for how the data was being factored into latent spaces, our data is implicit, and the package runs quickly.  
