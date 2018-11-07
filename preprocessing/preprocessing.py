@@ -131,6 +131,8 @@ class preprocessing:
             time = row[2]
             onehot.loc[onehot.user_id == user, game] = time
         
+        """Collapse This"""
+        onehot = onehot.groupby(['user_id']).sum() 
         onehot.to_csv(processed_directory+"/one_hot_playtime_random.csv")
         
         return onehot
@@ -148,6 +150,7 @@ class preprocessing:
             time = row[2]
             onehot.loc[onehot.user_id == user, game] = time
         
+        onehot = onehot.groupby(['user_id']).sum() 
         onehot.to_csv(processed_directory+"/one_hot_playtime_top.csv")
         
         return onehot
@@ -155,6 +158,7 @@ class preprocessing:
 #%%
 pre = preprocessing() 
 result = pre.playtime_top(processed_directory)
-result 
+result
 #%%
 result.describe()
+result.shape
