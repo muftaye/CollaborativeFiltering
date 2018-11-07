@@ -123,8 +123,8 @@ class NeighborPredict():
         
         return result.shape 
     
-    def playtime_predict(self, onehot_data, similarity_name, output_name, k_neighbors): 
-        df = pd.read_csv(onehot_data, ",").drop(['Unnamed: 0'], axis=1) 
+    def playtime_predict(self, onehot_data, similarity_name, output_name, k_neighbors, k_hours): 
+        df = pd.read_csv(onehot_data, ",")
         df_columns = df.columns
 #        print(len(df_columns))
 #        print(df_columns) 
@@ -132,6 +132,9 @@ class NeighborPredict():
         users = onehot_array[:, 0]
         onehot_games = onehot_array[:, 1:]
         sim = Similarity()
+        
+#        print(len(users))
+#        print(onehot_games.shape)
         
         """Create Similarity Matrix""" 
         similarity_matrix = np.empty((len(users), len(users)))
@@ -152,6 +155,7 @@ class NeighborPredict():
         
         temp = pd.read_csv(similarity_name, ",").drop(['Unnamed: 0'], axis=1)
         similarity_matrix = np.array(temp)
+#        print(temp)
         
         nonzero_average_matrix = []
         for row in onehot_games: 
@@ -161,6 +165,9 @@ class NeighborPredict():
             else: 
                 nonzero_average_matrix.append(0)
         
+        num_games = onehot_games.shape[1]
+        coverage_array = np.zeros(num_games) 
+        hours = k_hours 
         for i, row in enumerate(onehot_games): 
             """Change for Time Case, nonzero Average doesn't mean much here since it's all 1""" 
             for j, purchase in enumerate(row):
@@ -175,7 +182,8 @@ class NeighborPredict():
                     bottom = 0 
                     for index in top_k_indices: 
                         if masked_similarity[index] != 0 :
-                            top += masked_similarity[index] * (onehot_games[index][j] - nonzero_average_matrix[index])
+                            """Mean Subtraction Removed due to undue disturbances""" 
+                            top += masked_similarity[index] * (onehot_games[index][j]) #- nonzero_average_matrix[index]
                             bottom += abs(masked_similarity[index])
                     
                     if bottom == 0 : 
@@ -183,8 +191,11 @@ class NeighborPredict():
                     else: #change to 0.5
 #                        print(bottom)
                         onehot_games[i][j] ==  top/bottom
-                    
-
+                        if top/bottom > hours: 
+                            coverage_array[j] = 1 
+                        
+        coverage = sum(coverage_array)/num_games
+        print("Coverage is ", coverage)
         
 #        result = np.concatenate((nonehot_games), axis=1)   
         users = pd.DataFrame(users)
@@ -195,7 +206,7 @@ class NeighborPredict():
         result.columns = df_columns
         result.to_csv(output_name)
         
-        return result 
+        return result, coverage 
 
         
 
@@ -217,7 +228,7 @@ playtime_similarity_random_predict = output_directory+"/similarity_playtime_rand
 
 #%%
 neighbor = NeighborPredict() 
-neighbor.playtime_predict(playtime_random, playtime_similarity_random_predict, playtime_top_predict, 5)
+neighbor.playtime_predict(playtime_random, playtime_similarity_random_predict, playtime_top_predict, 5, 1)
 #purchase = neighbor.playtime_predict(loc, filename, 10)
 
 
@@ -285,7 +296,8 @@ class Evaluation:
             game = row[1]
             time = row[2]
             
-            prediction = prediction_matrix.at[prediction_matrix.user_id == user, game] 
+            prediction =  np.array(prediction_matrix.loc[prediction_matrix.user_id == user, game])[0]
+            print(prediction)
             
             abs_diff = abs(time-prediction)
             sq_diff = abs_diff ** 2 
@@ -304,10 +316,8 @@ class Evaluation:
 #            print(user, game, time)
             
 
-            prediction = prediction_matrix.at[prediction_matrix.user_id == user, game] 
-            prediction = prediction[0]
+            prediction = np.array(prediction_matrix.loc[prediction_matrix.user_id == user, game])[0]
             print(prediction)
-            print("-"*10)
             
             abs_diff = abs(time-prediction)
             sq_diff = abs_diff ** 2 
@@ -326,23 +336,17 @@ class Evaluation:
 #%%
 ev = Evaluation()
 tidy1 = pd.read_csv(processed_directory+"/play_tidy_random.csv", ",").drop(['Unnamed: 0'], axis=1)
-onehot1 = pd.read_csv(processed_directory+"/one_hot_playtime_random.csv", ",").drop(['Unnamed: 0'], axis=1)
+onehot1 = pd.read_csv(processed_directory+"/one_hot_playtime_random.csv", ",")
 train, val, test, onehot_df = ev.cross_validate(tidy1, onehot1)
 #%%
 #playtime_random_cv = pd.read_csv(processed_directory+"/one_hot_playtime_crossvalidated.csv").drop(['Unnamed: 0'], axis=1)
 playtime_random_cv = processed_directory+"/one_hot_playtime_crossvalidated.csv"
-temp_result = neighbor.playtime_predict(playtime_random_cv, playtime_similarity_random_predict, playtime_random_predict, 5)
-
-#%%
+temp_result, covarage_result = neighbor.playtime_predict(playtime_random_cv, playtime_similarity_random_predict, playtime_random_predict, 5, 1)
 
 #%%
 val1, val2, test1, test2 = ev.accuracy(temp_result, val, test)
+"""All zeroes: 3938.3000000000015 1452.8606138695247 3417.9666666666653 2186.2875100651027"""
 #%%
-print(val1, val2, test1, test2)
-
-
-#%%
-print(val1)
 
 
 
