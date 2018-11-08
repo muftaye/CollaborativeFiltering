@@ -14,7 +14,9 @@ Directory:
 **03_writeup**
   - contains case study
  
-other directories: 
+
+-------------
+Other directories: 
 
 
 archive
