@@ -23,7 +23,7 @@ Recommendation systems can even strengthen the gaming community by getting users
 
 We will use existing user and game data to prove we can make accurate (to some significance) recommendations of games that we already know the user is interested in since we will hold out known data.
 
-Neighborhood Based Methods
+# Neighborhood Based Methods
 
 ### Overview
 
@@ -49,6 +49,61 @@ Disclaimer: since the methods for the entire neighborhood pipeline is written by
 (i) Neighborhood Size: 
 
 This chart shows the difficulty of working with our data. Due to the sparsity of the matrix, the number of neighbors that have nonzero play times for a particular game is inherently very small. Furthermore, these small number of neighbors also tend to be very dissimilar from the user. As a result, changing the size of the neighborhood did not really affect our metrics. On the other hand, this does give a good comparison of the different metrics. MAE tends to be higher than RMSE, indicating small differences in play times on average (less than 1 hour). 
+
+(ii) Min Hours Played and Coverage
+
+This chart show how coverage changes, or rather, not changes with min hours played. This result and the previous result both show the difficulty of working with sparse data. 
+
+(iii) Size Effects
+
+As shown by the chart above (where model size is the number of games to consider), size tends to have a significant effect on runtime and error metrics. The error metrics are surprising in that you expect them to increase as the number of samples explodes. However, you actually see a dip at 75 games, which is surprising. However, given that these are random samples, it is understandable. Furthermore, the validation and test errors are actually in line. 
+
+### Alternative Design Choices
+
+One of the challenges faced here is that we don’t have explicit ratings from users and we must rely on hours played to gain insight. However, while someone who played a game for 1000 hours might appear to be very different from someone who played for 100 hours, we might want to categorize the hours into quartiles. In other words, we create 4 buckets, one for each of the quartiles and given values 1 to 4. This way, this might appear more similar to a rating system and individuals can be compared by their bucket rather than their absolute number of hours played. 
+
+Another alternative design choice we can make is to choose the top users. This might make sense business wise because these super-users might be the primary source of revenue. Furthermore, these users are much less sparse and share more in common with each other than a randomly selected sample of users. As a result, we can probably get better similarity measures using better user sampling. 
+
+Furthermore, since the methods in this section was handcrafted, it is not as robust as existing packages. We can improve on what we have by using optimization methods to pick the best hyperparameters using more comprehensive packages. 
+
+Lastly, we can try techniques outside of neighborhood methods, which we will cover in the next section. 
+
+
+# Model Based Methods
+
+### Overview
+
+Since we heavily customized and hand built the entire preprocessing, prediction, and validation pipeline in the neighbors module, we can take a step back and see how existing packages can perform on our next phase: matrix factorization model. 
+
+Let’s begin with an alternative preprocessing flow. The Steam data was provided as a CSV with rows containing details of user-game purchased and hours played values. We preprocessed the data by creating 3 separate files: customers.csv (contains a list of unique customers and a new indexed ID), games.csv (contains a list of game names and a new unique game ID), and hours.csv (contains list of hours played for each customer and game using the new IDs). We used new IDs to help speed up processing and keep a good sense of customers and games.
+
+Sampling data would be the important next step. For part 1, we decided to keep to a smaller data set as described in the instructions to gain better intuition on the data, testing and exploring. Since there was a lot of games that users did not really play and have data for, we decided to start with popular games so we filtered to games that were played by more than 50 users which gave 284 games. Out of those games we randomly sampled 90 games to use. Now that we had the games, we wanted to ensure we had the right users since there are a lot of users who would not have played any of those 90 games and therefore would not provide good recommendations with zero rows/columns. In order to work around this, we filtered the hours played list to only show the user-game hours played for the games in scope (from sample). This gives us a list of only customers who played our sampled games. To prevent hold-out issues between train and test data from holding out all of a customers hours played rating, we further filtered the customers unique list by those customers who had played more than 1 game. This decreases the likelihood of randomly holding out the rating for customer-game since that customer had only played that single game we held out. The sampling also maintains random seeds in case we need to replicate a run and can also specify new random seeds to get entirely new random data for cross-validations.
+
+Now, it is important to discuss the training and testing. Using our sampled data of popular random games, customers who played more than 1 of the games sampled and the ratings list (customer-game hours played), we derived what our train and test data was by holding out data from the ratings (hours played) list. For example, one run we held out 10% of data for test and the remaining was used for training. We could then use the train data to create the sparse matrix and have the test data to measure accuracy.
+
+We finally get to our model for matrix factorization. We used the Implicit package as recommended in the project instructions so we could get a feel for how the data was being factored into latent spaces, our data is implicit, and the package runs quickly. Using the Alternating Least Squares method, we fit the model on the sparse matrix and got the U (customers) and V (games) factored matrices. The multiplication of these matrices gives us the estimated (learned) matrix R.
+
+We tried using the squared error to measure accuracy from the estimated matrix R as compared to the test data we held out, but it looked like due to the large range of hours played (which we treated as a rating for the customer-game) the gap between the recommended and actual is high and thus gives a high squared error.
+
+Another accuracy method which we thought worked better for this specific model was to compare the top 10 recommendations and if the test game actually played by the customer was one of the top 10 recommended games. This gave a good idea of whether or not the model was properly recommended the games to the users and we started seeing roughly 40-50% accurate recommendations.
+
+
+#### Hyperparameter Effects
+
+We used the latent factor spaces as one of our parameters to see how it impacted the accuracy measure. Using the top 10 recommendation comparison measure, we were able to see a very small factor space was not as good as a medium size (2 factors as compared to 6 factors). As we went increased the factor spaces, we hit a maximum and then started seeing a decline in accuracy as the factors got too large. See the figure below which shows you which number of latent factor spaces worked better as compared to others.
+
+### Going Forward
+
+We should be able to use what we learned here to better expand on our models and recommendation techniques for the final project. We have implicit data of games purchased which can be brought into the picture and also help where we had large range in ratings (hours played) which could have impacted the recommendations. We did not use any side information which might help as well if we tried to pull some information on these games which can also help determine right factored spaces. Potentially creating our own Matrix Factorization algorithm for this particular dataset may also prove to work better given certain tweaks. Lastly, reviewing how the sample we used here as compared to other methods of sampling could show us something we did not notice.
+
+### Case Study Conclusion: 
+
+The study results clearly show that due to the sparse nature of our data, the second method to take a matrix factorization of the dataset is better at providing predictions with improvable accuracy measures. The sparsity essentially cause the neighborhood method to provide few testable results since the few recommendations that it does provide may not be in the test or validation set. While larger datasets may help the neighborhood method provide better recommendations, the running time of it is slow enough that it might not be worthwhile in production. Going forward, it might be more worthwhile for Nvidia to explore methods to decrease the dimensionality of our datasets. 
+
+It might be worthwhile to mention that our data was significantly limited. Due to the 3 column nature of the data, what we can accomplish is limited. It would be interesting to see how our current methods would fare if we enhance them with more data such as ratings, comments, and game popularity. 
+
+Our recommendation is to continue to develop recommendation methods before productionizing them. Our work show promise but could be improved. We need to watch out for how our algorithm scales, whether they can be efficiently tuned (hyperparameter wise) as our dataset gets larger, whether we can enhance our dataset with additional columns, and whether the recommendations are ultimately good. Potentially, we can implement our recommendation for seasoned players with more games and data under them. These alpha testers would establish good baselines before any global deployment of our methods. 
+
 
 
 
