@@ -124,7 +124,7 @@ As you can see, our highest recommendation is indeed Grand Theft Auto V and by i
 
 We should be able to use what we learned here to better expand on our models and recommendation techniques for the final project. We have implicit data of games purchased which can be brought into the picture and also help where we had large range in ratings (hours played) which could have impacted the recommendations. We did not use any side information which might help as well if we tried to pull some information on these games which can also help determine right factored spaces. Potentially creating our own Matrix Factorization algorithm for this particular dataset may also prove to work better given certain tweaks. Lastly, reviewing how the sample we used here as compared to other methods of sampling could show us something we did not notice.
 
-### Case Study Conclusion: 
+## Case Study Conclusion: 
 
 The study results clearly show that due to the sparse nature of our data, the second method to take a matrix factorization of the dataset is better at providing predictions with improvable accuracy measures. The sparsity essentially cause the neighborhood method to provide few testable results since the few recommendations that it does provide may not be in the test or validation set. While larger datasets may help the neighborhood method provide better recommendations, the running time of it is slow enough that it might not be worthwhile in production. Going forward, it might be more worthwhile for Nvidia to explore methods to decrease the dimensionality of our datasets. 
 
