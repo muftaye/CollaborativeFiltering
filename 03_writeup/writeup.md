@@ -108,16 +108,16 @@ We used the latent factor spaces as one of our parameters to see how it impacted
 Using what we learned, such as using 6 factors as what appears to be most accurate with the test data and 2000 iterations is better than 100, we could see how the recommendations were looking in the real example. Here is a sample finding that proves our intuition:
 Customer with ID 53875128 played the game Grand Theft Auto V for 86 hours in our test hold out. After running the model with 6 factors and 2000 iterations as our parameters, we received the below top 10 recommendations (using implicit package recommend):
 
-Grand Theft Auto V
-Battlefield Bad Company 2
-Call of Duty Modern Warfare 2 - Multiplayer
-Fallout 4
-Counter-Strike Source
-Hitman Absolution
-Tomb Raider
-Grand Theft Auto San Andreas
-BioShock Infinite
-Mount & Blade Warband
+Grand Theft Auto V . 
+Battlefield Bad Company 2 . 
+Call of Duty Modern Warfare 2 - Multiplayer . 
+Fallout 4 . 
+Counter-Strike Source . 
+Hitman Absolution . 
+Tomb Raider . 
+Grand Theft Auto San Andreas . 
+BioShock Infinite . 
+Mount & Blade Warband . 
 As you can see, our highest recommendation is indeed Grand Theft Auto V and by intuition, the other recommended games are similar when it comes to action and shooting categorical games. This worked really well with this customer as compared to some of the other customers because this customer in particular has played many games and so we were able to determine their behavior well. Some of the other users where the accuracy of recommendations was not as good was because they did not play many games and the behavior was harder for the model to determine. This in real-life is not entirely bad, because we would expect to see the more active users to get better recommendations and more likely to lead to sales.
 
 ### Going Forward
