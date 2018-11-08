@@ -1,6 +1,6 @@
 # Personalization Project
 
-Directory: 
+### Directory: 
 
 **01_neighbor** 
   - Neighborhood Method.ipynb #for charting and visuals (contains %load of the bottom two files) with 
@@ -16,7 +16,7 @@ Directory:
  
 
 -------------
-Other directories: 
+### Other directories: 
 
 
 archive
