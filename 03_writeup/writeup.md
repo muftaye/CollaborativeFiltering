@@ -80,7 +80,7 @@ Lastly, we can try techniques outside of neighborhood methods, which we will cov
 
 ### Overview
 
-Since we heavily customized and hand built the entire preprocessing, prediction, and validation pipeline in the neighbors module, we can take a step back and see how existing packages can perform on our next phase: matrix factorization model. 
+Since we heavily customized and hand built the entire preprocessing, prediction, and validation pipeline in the neighbors module, we can take a step back and see how existing packages can perform on our next phase: **matrix factorization model**. 
 
 Let’s begin with an alternative preprocessing flow. The Steam data was provided as a CSV with rows containing details of user-game purchased and hours played values. We preprocessed the data by creating 3 separate files: customers.csv (contains a list of unique customers and a new indexed ID), games.csv (contains a list of game names and a new unique game ID), and hours.csv (contains list of hours played for each customer and game using the new IDs). We used new IDs to help speed up processing and keep a good sense of customers and games.
 
