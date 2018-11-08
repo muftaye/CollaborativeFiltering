@@ -88,7 +88,7 @@ We tried using the squared error to measure accuracy from the estimated matrix R
 Another accuracy method which we thought worked better for this specific model was to compare the top 10 recommendations and if the test game actually played by the customer was one of the top 10 recommended games. This gave a good idea of whether or not the model was properly recommended the games to the users and we started seeing roughly 40-50% accurate recommendations.
 
 
-#### Hyperparameter Effects
+### Hyperparameter Effects
 
 We used the latent factor spaces as one of our parameters to see how it impacted the accuracy measure. Using the top 10 recommendation comparison measure, we were able to see a very small factor space was not as good as a medium size (2 factors as compared to 6 factors). As we went increased the factor spaces, we hit a maximum and then started seeing a decline in accuracy as the factors got too large. See the figure below which shows you which number of latent factor spaces worked better as compared to others.
 
