@@ -90,14 +90,13 @@ Now, it is important to discuss the training and testing. Using our sampled data
 
 We finally get to our model for matrix factorization. We used the Implicit package as recommended in the project instructions so we could get a feel for how the data was being factored into latent spaces, our data is implicit, and the package runs quickly. Using the Alternating Least Squares method, we fit the model on the sparse matrix and got the U (customers) and V (games) factored matrices. The multiplication of these matrices gives us the estimated (learned) matrix R.
 
-We tried using the squared error to measure accuracy from the estimated matrix R as compared to the test data we held out, but it looked like due to the large range of hours played (which we treated as a rating for the customer-game) the gap between the recommended and actual is high and thus gives a high squared error.
+We tried using the squared error to measure accuracy from the estimated matrix R as compared to the test data we held out, but it looked like due to the large range of hours played (which we treated as a rating for the customer-game) the gap between the recommended and actual is high and thus gives a high squared error.  The below figure shows how even changing the hyperparameters did not do much for the squared error.
+![chart5](https://github.com/jx2181/CollaborativeFiltering/blob/master/graphs/download%20(8).png)
 
 Another accuracy method which we thought worked better for this specific model was to compare the top 10 recommendations and if the test game actually played by the customer was one of the top 10 recommended games. This gave a good idea of whether or not the model was properly recommended the games to the users and we started seeing roughly 40-50% accurate recommendations.
 
 
 ### Hyperparameter Effects
-
-![chart5](https://github.com/jx2181/CollaborativeFiltering/blob/master/graphs/download%20(8).png)
 
 We used the latent factor spaces as one of our parameters to see how it impacted the accuracy measure. Using the top 10 recommendation comparison measure, we were able to see a very small factor space was not as good as a medium size (2 factors as compared to 6 factors). As we went increased the factor spaces, we hit a maximum and then started seeing a decline in accuracy as the factors got too large. See the figure below which shows you which number of latent factor spaces worked better as compared to others.
 
@@ -105,19 +104,20 @@ We used the latent factor spaces as one of our parameters to see how it impacted
 
 ### Observations Using What We Learned
 
-Using what we learned, such as using 6 factors as what appears to be most accurate with the test data and 2000 iterations is better than 100, we could see how the recommendations were looking in the real example. Here is a sample finding that proves our intuition:
-Customer with ID 53875128 played the game Grand Theft Auto V for 86 hours in our test hold out. After running the model with 6 factors and 2000 iterations as our parameters, we received the below top 10 recommendations (using implicit package recommend):
+Using what we learned, such as using 6 factors as what appears to be most accurate with the test data and 2000 iterations is better than 100, we could see how the recommendations were looking in the real example. Here is a sample finding that proves our intuition:  
+Customer with ID **53875128** played the game **Grand Theft Auto V** for **86 hours** in our test hold out. 
+After running the model with 6 factors and 2000 iterations as our parameters, we received the below top 10 recommendations (using implicit package recommend):
+ 1. Grand Theft Auto V
+ 2. Battlefield Bad Company 2
+ 3. Call of Duty Modern Warfare 2 - Multiplayer
+ 4. Fallout 4
+ 5. Counter-Strike Source
+ 6. Hitman Absolution
+ 7. Tomb Raider
+ 8. Grand Theft Auto San Andreas
+ 9. BioShock Infinite
+ 10. Mount & Blade Warband 
 
-Grand Theft Auto V . 
-Battlefield Bad Company 2 . 
-Call of Duty Modern Warfare 2 - Multiplayer . 
-Fallout 4 . 
-Counter-Strike Source . 
-Hitman Absolution . 
-Tomb Raider . 
-Grand Theft Auto San Andreas . 
-BioShock Infinite . 
-Mount & Blade Warband . 
 As you can see, our highest recommendation is indeed Grand Theft Auto V and by intuition, the other recommended games are similar when it comes to action and shooting categorical games. This worked really well with this customer as compared to some of the other customers because this customer in particular has played many games and so we were able to determine their behavior well. Some of the other users where the accuracy of recommendations was not as good was because they did not play many games and the behavior was harder for the model to determine. This in real-life is not entirely bad, because we would expect to see the more active users to get better recommendations and more likely to lead to sales.
 
 ### Going Forward
