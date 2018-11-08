@@ -48,20 +48,20 @@ Disclaimer: since the methods for the entire neighborhood pipeline is written by
 
 (i) Neighborhood Size: 
 
-![chart1](https://github.com/jx2181/CollaborativeFiltering/blob/master/graphs/download%20(6).png)
+![chart1](https://github.com/muftaye/CollaborativeFiltering/blob/master/graphs/download%20(6).png)
 
 This chart shows the difficulty of working with our data. Due to the sparsity of the matrix, the number of neighbors that have nonzero play times for a particular game is inherently very small. Furthermore, these small number of neighbors also tend to be very dissimilar from the user. As a result, changing the size of the neighborhood did not really affect our metrics. On the other hand, this does give a good comparison of the different metrics. MAE tends to be higher than RMSE, indicating small differences in play times on average (less than 1 hour). 
 
 (ii) Min Hours Played and Coverage
 
-![chart2](https://github.com/jx2181/CollaborativeFiltering/blob/master/graphs/download%20(7).png)
+![chart2](https://github.com/muftaye/CollaborativeFiltering/blob/master/graphs/download%20(7).png)
 
 This chart show how coverage changes, or rather, not changes with min hours played. This result and the previous result both show the difficulty of working with sparse data. 
 
 (iii) Size Effects
 
-![chart3](https://github.com/jx2181/CollaborativeFiltering/blob/master/graphs/download%20(3).png)
-![chart4](https://github.com/jx2181/CollaborativeFiltering/blob/master/graphs/download%20(4).png)
+![chart3](https://github.com/muftaye/CollaborativeFiltering/blob/master/graphs/download%20(3).png)
+![chart4](https://github.com/muftaye/CollaborativeFiltering/blob/master/graphs/download%20(4).png)
 
 As shown by the chart above (where model size is the number of games to consider), size tends to have a significant effect on runtime and error metrics. The error metrics are surprising in that you expect them to increase as the number of samples explodes. However, you actually see a dip at 75 games, which is surprising. However, given that these are random samples, it is understandable. Furthermore, the validation and test errors are actually in line. 
 
@@ -91,16 +91,16 @@ Now, it is important to discuss the training and testing. Using our sampled data
 We finally get to our model for matrix factorization. We used the Implicit package as recommended in the project instructions so we could get a feel for how the data was being factored into latent spaces, our data is implicit, and the package runs quickly. Using the Alternating Least Squares method, we fit the model on the sparse matrix and got the U (customers) and V (games) factored matrices. The multiplication of these matrices gives us the estimated (learned) matrix R.
 
 We tried using the squared error to measure accuracy from the estimated matrix R as compared to the test data we held out, but it looked like due to the large range of hours played (which we treated as a rating for the customer-game) the gap between the recommended and actual is high and thus gives a high squared error.  The below figure shows how even changing the hyperparameters did not do much for the squared error.
-![chart5](https://github.com/jx2181/CollaborativeFiltering/blob/master/graphs/download%20(8).png)
+![chart5](https://github.com/muftaye/CollaborativeFiltering/blob/master/graphs/download%20(8).png)
 
 Another accuracy method which we thought worked better for this specific model was to compare the top 10 recommendations and if the test game actually played by the customer was one of the top 10 recommended games. This gave a good idea of whether or not the model was properly recommended the games to the users and we started seeing roughly 40-50% accurate recommendations.
 
 
 ### Hyperparameter Effects
 
-We used the latent factor spaces as one of our parameters to see how it impacted the accuracy measure. Using the top 10 recommendation comparison measure, we were able to see a very small factor space was not as good as a medium size (2 factors as compared to 6 factors). As we went increased the factor spaces, we hit a maximum and then started seeing a decline in accuracy as the factors got too large. See the figure below which shows you which number of latent factor spaces worked better as compared to others.
+We used the latent factor spaces as one of our parameters to see how it impacted the accuracy measure. Using the top 10 recommendation comparison measure, we were able to see a very small factor space was not as good as a medium size (2 factors as compared to 6 factors). As we increased the factor spaces, we hit a maximum and then started seeing a decline in accuracy as the factors got too large. See the figure below which shows you the accuracy measure (# of accurate top 10 recommendations out of 1306 test data) as latent factor spaces increase.
 
-![chart6](https://github.com/jx2181/CollaborativeFiltering/blob/master/graphs/download%20(9).png)
+![chart6](https://github.com/muftaye/CollaborativeFiltering/blob/master/graphs/download%20(9).png)
 
 ### Observations Using What We Learned
 
@@ -118,20 +118,17 @@ After running the model with 6 factors and 2000 iterations as our parameters, we
  9. BioShock Infinite
  10. Mount & Blade Warband 
 
-As you can see, our highest recommendation is indeed Grand Theft Auto V and by intuition, the other recommended games are similar when it comes to action and shooting categorical games. This worked really well with this customer as compared to some of the other customers because this customer in particular has played many games and so we were able to determine their behavior well. Some of the other users where the accuracy of recommendations was not as good was because they did not play many games and the behavior was harder for the model to determine. This in real-life is not entirely bad, because we would expect to see the more active users to get better recommendations and more likely to lead to sales.
+As you can see, Grand Theft Auto V is a top recommendation for the customer and by intuition, the other recommended games are similar when it comes to action and shooting categories. This worked really well with this customer as compared to some of the other customers because this customer in particular has played many games and so we were able to determine their behavior well. Some of the other users where the accuracy of recommendations was not as good was because they did not play many games and the behavior was harder for the model to determine. This in real-life is not entirely bad, because we would expect to see the more active users to get better recommendations and more likely lead to sales.
 
 ### Going Forward
 
 We should be able to use what we learned here to better expand on our models and recommendation techniques for the final project. We have implicit data of games purchased which can be brought into the picture and also help where we had large range in ratings (hours played) which could have impacted the recommendations. We did not use any side information which might help as well if we tried to pull some information on these games which can also help determine right factored spaces. Potentially creating our own Matrix Factorization algorithm for this particular dataset may also prove to work better given certain tweaks. Lastly, reviewing how the sample we used here as compared to other methods of sampling could show us something we did not notice.
 
-## Case Study Conclusion: 
+### Case Study Conclusion: 
 
 The study results clearly show that due to the sparse nature of our data, the second method to take a matrix factorization of the dataset is better at providing predictions with improvable accuracy measures. The sparsity essentially cause the neighborhood method to provide few testable results since the few recommendations that it does provide may not be in the test or validation set. While larger datasets may help the neighborhood method provide better recommendations, the running time of it is slow enough that it might not be worthwhile in production. Going forward, it might be more worthwhile for Nvidia to explore methods to decrease the dimensionality of our datasets. 
 
 It might be worthwhile to mention that our data was significantly limited. Due to the 3 column nature of the data, what we can accomplish is limited. It would be interesting to see how our current methods would fare if we enhance them with more data such as ratings, comments, and game popularity. 
 
 Our recommendation is to continue to develop recommendation methods before productionizing them. Our work show promise but could be improved. We need to watch out for how our algorithm scales, whether they can be efficiently tuned (hyperparameter wise) as our dataset gets larger, whether we can enhance our dataset with additional columns, and whether the recommendations are ultimately good. Potentially, we can implement our recommendation for seasoned players with more games and data under them. These alpha testers would establish good baselines before any global deployment of our methods. 
-
-
-
 
