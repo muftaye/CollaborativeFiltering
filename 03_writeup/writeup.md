@@ -48,13 +48,20 @@ Disclaimer: since the methods for the entire neighborhood pipeline is written by
 
 (i) Neighborhood Size: 
 
+![chart1](https://github.com/jx2181/CollaborativeFiltering/blob/master/graphs/download%20(6).png)
+
 This chart shows the difficulty of working with our data. Due to the sparsity of the matrix, the number of neighbors that have nonzero play times for a particular game is inherently very small. Furthermore, these small number of neighbors also tend to be very dissimilar from the user. As a result, changing the size of the neighborhood did not really affect our metrics. On the other hand, this does give a good comparison of the different metrics. MAE tends to be higher than RMSE, indicating small differences in play times on average (less than 1 hour). 
 
 (ii) Min Hours Played and Coverage
 
+![chart2](https://github.com/jx2181/CollaborativeFiltering/blob/master/graphs/download%20(7).png)
+
 This chart show how coverage changes, or rather, not changes with min hours played. This result and the previous result both show the difficulty of working with sparse data. 
 
 (iii) Size Effects
+
+![chart3](https://github.com/jx2181/CollaborativeFiltering/blob/master/graphs/download%20(3).png)
+![chart4](https://github.com/jx2181/CollaborativeFiltering/blob/master/graphs/download%20(4).png)
 
 As shown by the chart above (where model size is the number of games to consider), size tends to have a significant effect on runtime and error metrics. The error metrics are surprising in that you expect them to increase as the number of samples explodes. However, you actually see a dip at 75 games, which is surprising. However, given that these are random samples, it is understandable. Furthermore, the validation and test errors are actually in line. 
 
@@ -90,7 +97,11 @@ Another accuracy method which we thought worked better for this specific model w
 
 ### Hyperparameter Effects
 
+![chart5](https://github.com/jx2181/CollaborativeFiltering/blob/master/graphs/download%20(8).png)
+
 We used the latent factor spaces as one of our parameters to see how it impacted the accuracy measure. Using the top 10 recommendation comparison measure, we were able to see a very small factor space was not as good as a medium size (2 factors as compared to 6 factors). As we went increased the factor spaces, we hit a maximum and then started seeing a decline in accuracy as the factors got too large. See the figure below which shows you which number of latent factor spaces worked better as compared to others.
+
+![chart6](https://github.com/jx2181/CollaborativeFiltering/blob/master/graphs/download%20(9).png)
 
 ### Observations Using What We Learned
 
