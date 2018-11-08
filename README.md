@@ -11,6 +11,12 @@ Directory:
   - MatrixFactorization.ipynb #charting and visuals
   - Preprocessing.ipynb
 
+**03_writeup**
+  - contains case study
+ 
+other directories: 
+
+
 archive
   - Deprecated #folder for older versions and files
 
@@ -21,5 +27,4 @@ data
 
 graphs
 
-**writeup**
-  - contains case study
+
